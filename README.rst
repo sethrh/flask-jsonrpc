@@ -1,13 +1,23 @@
 Flask-Async JSON-RPC
 ==============
 
-This is Flask JSON-RPC with support for [flask-async](https://github.com/mrdon/flask/). 
+This is Flask JSON-RPC with support for `flask-async <https://github.com/mrdon/flask/>`_. 
 
 Requires: 
 
 - Python 3.4+
 - aiohttp
 - Flask-Async
+
+Usage changes: Basically just decorate your methods with @asyncio.coroutine: 
+
+::
+
+	@jsonrpc.method('test')
+	@asyncio.coroutine
+	def test_method(params):
+		pass
+
 
 Original Readme follows
 ==============
