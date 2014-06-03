@@ -1,4 +1,15 @@
-Flask JSON-RPC
+Flask-Async JSON-RPC
+==============
+
+This is Flask JSON-RPC with support for [flask-async](https://github.com/mrdon/flask/). 
+
+Requires: 
+
+- Python 3.4+
+- aiohttp
+- Flask-Async
+
+Original Readme follows
 ==============
 
 A basic JSON-RPC implementation for your Flask-powered sites based on `django-json-rpc <https://github.com/samuraisam/django-json-rpc>`_.
@@ -115,12 +126,11 @@ Referencies
 * http://flask.pocoo.org/docs/python3/#python3-support
 * http://www.jsonrpc.org/
 
-
+
 Dependecies
 ***********
 
-* Python (2.6.5+), (2.7, 3.3) or later (http://www.python.org)
-* Flask 0.9 or later (http://flask.pocoo.org)
+See Above
 
 
 Project Information
