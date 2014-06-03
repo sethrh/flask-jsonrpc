@@ -25,6 +25,7 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+import asyncio
 import re
 import decimal
 import datetime
@@ -161,6 +162,7 @@ class JSONRPCSite(object):
                 return True, D
         return False, {}
 
+    @asyncio.coroutine
     def response_dict(self, request, D, is_batch=False, version_hint='1.0'):
         version = version_hint
         response = self.empty_response(version=version)
@@ -206,7 +208,9 @@ class JSONRPCSite(object):
                 return None, 204
 
             R = apply_version[version](method, D['params'])
-
+            if asyncio.iscoroutine(R):
+                R = (yield from R)
+            
             if 'id' not in D or ('id' in D and D['id'] is None): # notification
                 return None, 204
 
@@ -260,6 +264,7 @@ class JSONRPCSite(object):
         return response, status
 
     @csrf_exempt
+    @asyncio.coroutine
     def dispatch(self, request, method=''):
         # in case we do something json doesn't like, we always get back valid
         # json-rpc response
@@ -281,10 +286,10 @@ class JSONRPCSite(object):
                     raise InvalidRequestError(e.message)
 
             if type(D) is list:
-                response = [self.response_dict(request, d, is_batch=True)[0] for d in D]
+                response = [(yield from self.response_dict(request, d, is_batch=True))[0] for d in D]
                 status = 200
             else:
-                response, status = self.response_dict(request, D)
+                response, status = (yield from self.response_dict(request, D))
                 if response is None and (not 'id' in D or D['id'] is None): # a notification
                     response = ''
                     return response, status

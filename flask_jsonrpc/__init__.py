@@ -25,6 +25,7 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+import asyncio
 import re
 import logging
 from functools import wraps
@@ -157,8 +158,9 @@ def _inject_args(sig, types):
     return sig
 
 def _site_api(site):
+    @asyncio.coroutine
     def wrapper(method=''):
-        response_dict, status_code = site.dispatch(request, method)
+        response_dict, status_code = (yield from site.dispatch(request, method))
         if current_app.config['DEBUG']:
             logging.debug('request: %s', extract_raw_data_request(request))
             logging.debug('response: %s, %s', status_code, response_dict)
